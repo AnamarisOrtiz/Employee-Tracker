@@ -35,3 +35,8 @@ VALUES ($1, $2, $3, $4);
 UPDATE employees
 SET role_id = $2 
 WHERE id = $1; 
+
+ALTER TABLE employee DROP CONSTRAINT employee_role_id_fkey;
+
+
+ALTER TABLE employee ADD CONSTRAINT employee_role_id_fkey FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE;

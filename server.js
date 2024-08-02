@@ -3,7 +3,7 @@ const pool  = require('./config/connections');
 const inquirer = require('inquirer');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 
 app.use(express.urlencoded({ extended: false }));
@@ -388,9 +388,8 @@ function deleteDepartment() {
 }
 
 function deleteRole() {
-    pool.query('SELECT * FROM role', (err, res) => {
-        if (err) throw err;
-        const roles = res.rows;
+    this.query('SELECT * FROM role').then(roleRes => {
+        const roles = roleRes.rows;
         inquirer.prompt([
             {
                 name: 'role_id',
@@ -402,15 +401,23 @@ function deleteRole() {
                 }))
             }
         ]).then(answer => {
-            const query = 'DELETE FROM role WHERE id = $1';
-            pool.query(query, [answer.role_id], (err, res) => {
-                if (err) throw err;
-                console.log('Role deleted successfully.');
-                startApp();
+            // Check if any employees are associated with the role
+            this.query('SELECT * FROM employee WHERE role_id = $1', [answer.role_id]).then(empRes => {
+                if (empRes.rows.length > 0) {
+                    console.log('Cannot delete role. Employees are associated with this role.');
+                    this.startApp();
+                } else {
+                    const query = 'DELETE FROM role WHERE id = $1';
+                    this.query(query, [answer.role_id]).then(() => {
+                        console.log('Role deleted successfully.');
+                        this.startApp();
+                    });
+                }
             });
         });
     });
 }
+
 
 function deleteEmployee() {
     pool.query('SELECT * FROM employee', (err, res) => {

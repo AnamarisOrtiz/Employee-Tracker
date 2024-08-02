@@ -3,7 +3,8 @@ INSERT INTO department (name) VALUES
 ('Human Resources'),
 ('Engineering'),
 ('Marketing'),
-('Sales');
+('Sales')
+ON CONFLICT (name) DO NOTHING;
 
 
 INSERT INTO role (title, salary, department_id) VALUES 
@@ -14,7 +15,8 @@ INSERT INTO role (title, salary, department_id) VALUES
 ('HR Assistant', 45000, 1),
 ('Senior Engineer', 120000, 2),
 ('Marketing Manager', 85000, 3),
-('Sales Manager', 80000, 4);
+('Sales Manager', 80000, 4)
+ON CONFLICT (title) DO NOTHING;
 
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES 
@@ -32,4 +34,5 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
 ('Linda', 'White', 1, NULL),
 ('Paul', 'Harris', 4, 4),
 ('Nancy', 'Martin', 5, 1),
-('Daniel', 'Thompson', 7, 3);
+('Daniel', 'Thompson', 7, 3)
+ON CONFLICT (first_name, last_name) DO NOTHING;
